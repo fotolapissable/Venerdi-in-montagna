@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Venerdì in montagna – Conti del gruppo</title>
+<meta name="description" content="Calcolo delle spese di cibo e auto per le uscite del venerdì sull'Etna e sui Nebrodi.">
+<meta name="theme-color" content="#2F5D46">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NN6FP74TCW"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NN6FP74TCW');</script>
+<style>
+:root{
+  --cenere:#E5E7E1; --carta:#F8F9F5; --basalto:#22272B; --pino:#2F5D46;
+  --pino-chiaro:#DCE7DF; --ginestra:#F2C230; --lava:#B23A2A; --muschio:#5F6B55; --linea:#C9CDC3;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cenere);color:var(--basalto);
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:18px;line-height:1.45;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+main{max-width:640px;margin:0 auto;padding:12px 14px 40px}
+header.top{background:var(--pino);color:#fff;padding:18px 16px 16px}
+header.top div{max-width:640px;margin:0 auto}
+header.top h1{margin:0;font-size:1.5rem;line-height:1.15}
+header.top p{margin:4px 0 0;opacity:.85;font-size:.95rem}
+section.step{background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);padding:14px 14px 16px;margin-top:14px}
+.step h2{margin:0 0 10px;font-size:1.15rem;display:flex;gap:10px;align-items:center}
+.step h2 .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--pino);color:#fff;display:grid;place-items:center;font-size:.95rem}
+label{display:block;font-weight:700;font-size:.95rem;margin:10px 0 4px}
+input,select,textarea{font:inherit;font-size:1rem;width:100%;padding:11px 12px;border:1.5px solid var(--linea);border-radius:8px;background:#fff;color:var(--basalto);min-height:48px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--ginestra);outline-offset:1px;border-color:var(--pino)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{color:var(--muschio);font-size:.9rem;margin:6px 0 0}
+button{font:inherit;cursor:pointer;border-radius:8px;min-height:48px;padding:10px 16px;border:1.5px solid var(--pino);background:#fff;color:var(--pino);font-weight:700}
+button.pieno{background:var(--pino);color:#fff}
+button.piccolo{min-height:40px;padding:6px 12px;font-size:.9rem}
+button.via{border-color:var(--linea);color:var(--muschio);background:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--linea);background:#fff;color:var(--basalto);font-weight:400;border-radius:999px;min-height:44px;padding:8px 14px}
+.chip[aria-pressed="true"]{background:var(--pino);border-color:var(--pino);color:#fff;font-weight:700}
+.conta{font-weight:700;color:var(--pino)}
+.voce{border:1px solid var(--linea);border-radius:8px;padding:10px 12px 12px;margin-top:10px;background:#fff}
+.voce .testa{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.voce .costo{font-weight:700}
+.azioni{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.avviso{background:#FBEAE6;border-left:4px solid var(--lava);padding:8px 10px;border-radius:6px;margin-top:10px;font-size:.95rem}
+/* il cartello: elemento distintivo */
+.cartello{position:relative;background:var(--ginestra);color:var(--basalto);padding:16px 64px 16px 18px;margin:6px 0 14px;
+  clip-path:polygon(0 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,0 100%);border-radius:6px 0 0 6px}
+.cartello small{display:block;font-size:.95rem}
+.cartello strong{display:block;font-size:2.4rem;line-height:1.05;letter-spacing:-.5px}
+.cartello span{display:block;font-size:.9rem;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--linea)}
+th{font-size:.85rem;color:var(--muschio)}
+td.num,th.num{text-align:right;white-space:nowrap}
+.riceve{color:var(--pino);font-weight:700}
+.versa{color:var(--lava);font-weight:700}
+.riepilogo td{border:none;padding:4px 6px}
+details{margin-top:14px;background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);padding:12px 14px}
+summary{font-weight:700;cursor:pointer;min-height:32px}
+.storico-voce{border-top:1px solid var(--linea);padding:10px 0}
+.storico-voce:first-child{border-top:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:var(--basalto);color:#fff;padding:12px 18px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+footer{text-align:center;color:var(--muschio);font-size:.85rem;margin-top:24px}
+footer a{color:var(--pino)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div>
+  <h1>Venerdì in montagna</h1>
+  <p>Conti di cibo e auto, divisi tra tutti</p>
+</div></header>
+
+<main>
+  <section class="step" aria-labelledby="h1s">
+    <h2 id="h1s"><span class="n">1</span>Uscita</h2>
+    <label for="data">Data</label><input type="date" id="data">
+    <label for="dest">Destinazione</label><select id="dest"></select>
+    <p class="hint" id="destNota"></p>
+  </section>
+
+  <section class="step" aria-labelledby="h2s">
+    <h2 id="h2s"><span class="n">2</span>Chi c'è <span class="conta" id="nPart"></span></h2>
+    <div class="chips" id="chips"></div>
+    <div class="row" style="grid-template-columns:1fr auto;margin-top:10px">
+      <input id="ospite" placeholder="Aggiungi un ospite" aria-label="Nome ospite">
+      <button id="addOspite">Aggiungi</button>
+    </div>
+  </section>
+
+  <section class="step" aria-labelledby="h3s">
+    <h2 id="h3s"><span class="n">3</span>Auto</h2>
+    <div id="auto"></div>
+    <div class="azioni"><button id="addAuto">Aggiungi un'auto</button></div>
+    <p class="hint">I km della destinazione sono già andata e ritorno + 5 km di giri. Lo sterrato si paga con la tariffa 4x4.</p>
+  </section>
+
+  <section class="step" aria-labelledby="h4s">
+    <h2 id="h4s"><span class="n">4</span>Spese cibo</h2>
+    <div id="cibo"></div>
+    <div class="azioni"><button id="addCibo">Aggiungi una spesa</button></div>
+  </section>
+
+  <section class="step" aria-labelledby="h5s">
+    <h2 id="h5s"><span class="n">5</span>Conti</h2>
+    <div id="risultato"></div>
+  </section>
+
+  <details id="storicoBox">
+    <summary>Uscite salvate</summary>
+    <div id="storico"></div>
+  </details>
+
+  <details>
+    <summary>Tariffe e componenti</summary>
+    <p class="hint">Le modifiche restano salvate su questo telefono.</p>
+    <div id="tariffe"></div>
+    <label for="membri">Componenti del gruppo (uno per riga)</label>
+    <textarea id="membri" rows="8"></textarea>
+    <div class="azioni"><button class="pieno" id="salvaImp">Salva tariffe e componenti</button><button class="via" id="resetImp">Ripristina i valori iniziali</button></div>
+  </details>
+
+  <footer>Tariffe al km calcolate su carburante, manutenzione, gomme, assicurazione, bollo e ammortamento.<br>
+  <a href="https://apps.fotolapissable.it/">apps.fotolapissable.it</a></footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const MEMBRI_BASE=["Alfredo","Salvo Di Giovanni","Masino","Lorenzo","Turi La Piana","Angelino","Sebastiano","Nino Scalia","General Nino","Nino Cannata","Michele","Turi Russo","Franco Giovanni","Salvo Gullotto","Giuseppe Spuria","Salvatore Di Mauro"];
+const AUTO_BASE=[
+ {id:"peugeot",nome:"Peugeot 2008 diesel",autista:"Alfredo",partenza:"riposto",strada:0.29,sterrato:null},
+ {id:"fire_b",nome:"Panda 4x4 1100 Fire (benzina)",autista:"Angelino",partenza:"riposto",strada:0.30,sterrato:0.40},
+ {id:"fire_g",nome:"Panda 4x4 1100 Fire (GPL)",autista:"Angelino",partenza:"riposto",strada:0.20,sterrato:0.30},
+ {id:"panda80",nome:"Panda 4x4 965 cc (1980)",autista:"Nino Scalia",partenza:"riposto",strada:0.28,sterrato:0.38},
+ {id:"mitsu",nome:"Mitsubishi 4x4 cabinato",autista:"Franco Giovanni",partenza:"randazzo",strada:0.42,sterrato:0.52},
+ {id:"altra",nome:"Altra auto",autista:"",partenza:"riposto",strada:0.30,sterrato:0.40}
+];
+const DEST=[
+ {id:"roccella",nome:"Roccella Valdemone",riposto:111,randazzo:37,nota:""},
+ {id:"sartorius",nome:"Monti Sartorius (parcheggio)",riposto:59,randazzo:73,nota:""},
+ {id:"crisimo",nome:"Rifugio Monte Crisimo (bivio quota 1000)",riposto:46.8,randazzo:41,nota:"Oltre il parcheggio proseguono solo Panda e Mitsubishi: inserisci i km di sterrato."},
+ {id:"saletti",nome:"Rifugio Saletti (muro di sbarramento)",riposto:79,randazzo:33,nota:"Strada asfaltata fino al parcheggio, va bene per tutte le auto. Km stimati."},
+ {id:"smbosco",nome:"Santa Maria del Bosco (da S. Domenica Vittoria)",riposto:103,randazzo:23,nota:"Parcheggio al Parco Sub Urbano. Km stimati."},
+ {id:"camisa",nome:"Area attrezzata Camisa (cancello)",riposto:109,randazzo:25,nota:"Strada per il Vivaio Flascio dissestata. In auto oltre il cancello solo con autorizzazione della Forestale (+8 km sterrato). Km stimati."},
+ {id:"altro",nome:"Altra destinazione (km a mano)",riposto:null,randazzo:null,nota:"Inserisci i km di ogni auto: andata + ritorno + 5 km di giri."}
+];
+
+const $=s=>document.querySelector(s);
+const num=v=>{const n=parseFloat(String(v??"").replace(",","."));return isFinite(n)?n:0};
+const eur=n=>n.toLocaleString("it-IT",{style:"currency",currency:"EUR"});
+const tar=n=>n==null?"–":n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+const km=n=>n.toLocaleString("it-IT",{maximumFractionDigits:1});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2200)}
+
+let membri=load("gv_membri",MEMBRI_BASE);
+let tariffe=load("gv_tariffe",AUTO_BASE);
+const oggi=new Date().toISOString().slice(0,10);
+let S=load("gv_bozza",null)||nuovaUscita();
+function nuovaUscita(){return {data:oggi,dest:"",part:[],ospiti:[],auto:[],cibo:[{chi:"",cosa:"",euro:""}]}}
+const autoDef=id=>tariffe.find(a=>a.id===id)||tariffe[0];
+const destDef=()=>DEST.find(d=>d.id===S.dest);
+function salvaBozza(){save("gv_bozza",S)}
+
+/* ---- rendering ---- */
+function renderDest(){
+  $("#data").value=S.data;
+  $("#dest").innerHTML='<option value="">Scegli…</option>'+DEST.map(d=>`<option value="${d.id}" ${d.id===S.dest?"selected":""}>${esc(d.nome)}</option>`).join("");
+  const d=destDef();
+  $("#destNota").textContent=d?(d.riposto!=null?`Km conteggiati: ${km(d.riposto)} da Riposto, ${km(d.randazzo)} da Randazzo. `:"")+d.nota:"";
+}
+function tutti(){return [...membri,...S.ospiti]}
+function renderChips(){
+  $("#chips").innerHTML=tutti().map(n=>`<button class="chip" data-nome="${esc(n)}" aria-pressed="${S.part.includes(n)}">${esc(n)}</button>`).join("");
+  $("#nPart").textContent=S.part.length?`(${S.part.length})`:"";
+}
+function opzioniPersone(sel){
+  const lista=S.part.length?S.part:tutti();
+  return '<option value="">Chi?</option>'+lista.map(n=>`<option ${n===sel?"selected":""}>${esc(n)}</option>`).join("")+
+    (sel&&!lista.includes(sel)?`<option selected>${esc(sel)}</option>`:"");
+}
+function renderAuto(){
+  $("#auto").innerHTML=S.auto.map((a,i)=>{const d=autoDef(a.tipo);return `
+  <div class="voce" data-i="${i}">
+    <div class="testa"><strong>Auto ${i+1}</strong><button class="piccolo via" data-del-auto="${i}" aria-label="Togli auto ${i+1}">Togli</button></div>
+    <label>Auto</label>
+    <select data-k="tipo">${tariffe.map(t=>`<option value="${t.id}" ${t.id===a.tipo?"selected":""}>${esc(t.nome)} – ${tar(t.strada)} €/km</option>`).join("")}</select>
+    <div class="row">
+      <div><label>Autista</label><select data-k="autista">${opzioniPersone(a.autista)}</select></div>
+      <div><label>Parte da</label><select data-k="partenza"><option value="riposto" ${a.partenza==="riposto"?"selected":""}>Riposto</option><option value="randazzo" ${a.partenza==="randazzo"?"selected":""}>Randazzo</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Km strada</label><input inputmode="decimal" data-k="km" value="${esc(a.km)}"></div>
+      <div><label>Km sterrato</label><input inputmode="decimal" data-k="kmS" value="${esc(a.kmS)}" ${d.sterrato==null?'disabled placeholder="non adatta"':'placeholder="0"'}></div>
+    </div>
+    <p class="hint">Costo: <span class="costo" data-costo="${i}"></span></p>
+  </div>`}).join("")||'<p class="hint">Nessuna auto inserita.</p>';
+  aggiornaCostiAuto();
+}
+function costoAuto(a){const d=autoDef(a.tipo);return num(a.km)*d.strada+(d.sterrato!=null?num(a.kmS)*d.sterrato:0)}
+function aggiornaCostiAuto(){S.auto.forEach((a,i)=>{const el=document.querySelector(`[data-costo="${i}"]`);if(el){const d=autoDef(a.tipo);
+  el.textContent=`${km(num(a.km))} km × ${tar(d.strada)}`+(num(a.kmS)&&d.sterrato!=null?` + ${km(num(a.kmS))} km × ${tar(d.sterrato)}`:"")+` = ${eur(costoAuto(a))}`}})}
+function renderCibo(){
+  $("#cibo").innerHTML=S.cibo.map((c,i)=>`
+  <div class="voce" data-c="${i}">
+    <div class="testa"><strong>Spesa ${i+1}</strong><button class="piccolo via" data-del-cibo="${i}" aria-label="Togli spesa ${i+1}">Togli</button></div>
+    <div class="row">
+      <div><label>Chi ha pagato</label><select data-k="chi">${opzioniPersone(c.chi)}</select></div>
+      <div><label>Importo €</label><input inputmode="decimal" data-k="euro" value="${esc(c.euro)}" placeholder="0,00"></div>
+    </div>
+    <label>Cosa</label><input data-k="cosa" value="${esc(c.cosa)}" placeholder="Pane, carne, frutta…">
+  </div>`).join("")||'<p class="hint">Nessuna spesa inserita.</p>';
+}
+
+function calcola(){
+  const n=S.part.length;
+  const auto=S.auto.map(a=>({...a,def:autoDef(a.tipo),costo:costoAuto(a)})).filter(a=>a.costo>0);
+  const cibo=S.cibo.filter(c=>num(c.euro)>0);
+  const totAuto=auto.reduce((s,a)=>s+a.costo,0), totCibo=cibo.reduce((s,c)=>s+num(c.euro),0), tot=totAuto+totCibo;
+  const quota=n?tot/n:0, speso={};
+  auto.forEach(a=>{if(a.autista)speso[a.autista]=(speso[a.autista]||0)+a.costo});
+  cibo.forEach(c=>{if(c.chi)speso[c.chi]=(speso[c.chi]||0)+num(c.euro)});
+  const righe=S.part.map(p=>({nome:p,speso:speso[p]||0,saldo:(speso[p]||0)-quota}));
+  const avvisi=[];
+  auto.forEach((a,i)=>{if(!a.autista)avvisi.push(`Manca l'autista per ${a.def.nome}.`);else if(!S.part.includes(a.autista))avvisi.push(`${a.autista} guida ma non è segnato tra i presenti.`)});
+  cibo.forEach(c=>{if(!c.chi)avvisi.push(`Manca chi ha pagato una spesa di ${eur(num(c.euro))}.`);else if(!S.part.includes(c.chi))avvisi.push(`${c.chi} ha pagato ma non è segnato tra i presenti.`)});
+  return {n,auto,cibo,totAuto,totCibo,tot,quota,righe,avvisi};
+}
+function renderRisultato(){
+  const R=calcola();
+  if(!R.n||!R.tot){$("#risultato").innerHTML='<p class="hint">Segna chi c\'è e inserisci almeno un\'auto o una spesa per vedere i conti.</p>';return}
+  const riceve=R.righe.filter(r=>r.saldo>0.004), versa=R.righe.filter(r=>r.saldo<-0.004);
+  $("#risultato").innerHTML=`
+    <div class="cartello"><small>Quota a testa</small><strong>${eur(R.quota)}</strong><span>${eur(R.tot)} diviso ${R.n} ${R.n===1?"persona":"persone"}</span></div>
+    <table class="riepilogo"><tr><td>Cibo</td><td class="num">${eur(R.totCibo)}</td></tr><tr><td>Auto</td><td class="num">${eur(R.totAuto)}</td></tr><tr><td><strong>Totale</strong></td><td class="num"><strong>${eur(R.tot)}</strong></td></tr></table>
+    ${R.avvisi.map(a=>`<div class="avviso">${esc(a)}</div>`).join("")}
+    <table style="margin-top:12px"><thead><tr><th>Nome</th><th class="num">Ha speso</th><th class="num">Saldo</th></tr></thead><tbody>
+    ${[...riceve,...versa,...R.righe.filter(r=>Math.abs(r.saldo)<=0.004)].map(r=>`<tr><td>${esc(r.nome)}</td><td class="num">${r.speso?eur(r.speso):"–"}</td>
+      <td class="num ${r.saldo>0.004?"riceve":r.saldo<-0.004?"versa":""}">${r.saldo>0.004?"riceve "+eur(r.saldo):r.saldo<-0.004?"versa "+eur(-r.saldo):"pari"}</td></tr>`).join("")}
+    </tbody></table>
+    <div class="azioni"><button class="pieno" id="condividi">Condividi su WhatsApp</button><button id="copia">Copia il testo</button><button id="salvaUscita">Salva l'uscita</button><button class="via" id="nuova">Nuova uscita</button></div>`;
+}
+function testoWhatsApp(){
+  const R=calcola(), d=destDef(), dt=S.data?new Date(S.data+"T12:00").toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long"}):"";
+  const L=[`*Uscita di ${dt}*`];
+  if(d&&d.id!=="altro")L.push(`📍 ${d.nome}`);
+  L.push(`👥 ${R.n} partecipanti`,"");
+  if(R.cibo.length){L.push("*Cibo*");R.cibo.forEach(c=>L.push(`• ${c.chi||"?"}${c.cosa?" ("+c.cosa+")":""}: ${eur(num(c.euro))}`))}
+  if(R.auto.length){L.push("*Auto*");R.auto.forEach(a=>{let t=`• ${a.def.nome} (${a.autista||"?"}): ${km(num(a.km))} km × ${tar(a.def.strada)}`;if(num(a.kmS)&&a.def.sterrato!=null)t+=` + ${km(num(a.kmS))} km sterrato × ${tar(a.def.sterrato)}`;L.push(t+` = ${eur(a.costo)}`)})}
+  L.push("",`Totale: ${eur(R.tot)}`,`*Quota a testa: ${eur(R.quota)}*`,"");
+  const ric=R.righe.filter(r=>r.saldo>0.004), ver=R.righe.filter(r=>r.saldo<-0.004);
+  if(ric.length){L.push("*Ricevono*");ric.forEach(r=>L.push(`• ${r.nome}: ${eur(r.saldo)}`))}
+  if(ver.length){L.push("",`*Versano ${eur(R.quota)}*`);L.push(ver.filter(r=>Math.abs(-r.saldo-R.quota)<0.01).map(r=>r.nome).join(", "));
+    ver.filter(r=>Math.abs(-r.saldo-R.quota)>=0.01).forEach(r=>L.push(`${r.nome}: versa ${eur(-r.saldo)}`))}
+  return L.filter((x,i,a)=>!(x===""&&a[i-1]==="")).join("\n").trim();
+}
+function renderStorico(){
+  const st=load("gv_storico",[]);
+  $("#storico").innerHTML=st.length?st.map((u,i)=>`<div class="storico-voce"><strong>${esc(u.titolo)}</strong><br><span class="hint">${u.n} persone, totale ${eur(u.tot)}, quota ${eur(u.quota)}</span>
+    <div class="azioni"><button class="piccolo" data-apri="${i}">Riapri</button><button class="piccolo" data-share="${i}">Condividi</button><button class="piccolo via" data-canc="${i}">Elimina</button></div></div>`).join(""):'<p class="hint">Nessuna uscita salvata. Dopo i conti, tocca "Salva l\'uscita".</p>';
+}
+function renderTariffe(){
+  $("#tariffe").innerHTML=tariffe.map((t,i)=>`<div class="voce"><strong>${esc(t.nome)}</strong>
+   <div class="row"><div><label>€/km strada</label><input inputmode="decimal" data-t="${i}" data-k="strada" value="${tar(t.strada)}"></div>
+   <div><label>€/km sterrato</label><input inputmode="decimal" data-t="${i}" data-k="sterrato" value="${t.sterrato==null?"":tar(t.sterrato)}" placeholder="non adatta"></div></div>
+   <label>Autista abituale</label><input data-t="${i}" data-k="autista" value="${esc(t.autista)}"></div>`).join("");
+  $("#membri").value=membri.join("\n");
+}
+function renderTutto(){renderDest();renderChips();renderAuto();renderCibo();renderRisultato();renderStorico()}
+
+/* ---- eventi ---- */
+function kmPer(a){const d=destDef();return d&&d[a.partenza]!=null?String(d[a.partenza]).replace(".",","):""}
+$("#data").addEventListener("change",e=>{S.data=e.target.value;salvaBozza()});
+$("#dest").addEventListener("change",e=>{S.dest=e.target.value;S.auto.forEach(a=>a.km=kmPer(a));salvaBozza();renderDest();renderAuto();renderRisultato()});
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const n=b.dataset.nome;
+  S.part=S.part.includes(n)?S.part.filter(x=>x!==n):[...S.part,n];salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
+$("#addOspite").addEventListener("click",()=>{const v=$("#ospite").value.trim();if(!v)return;if(!tutti().includes(v))S.ospiti.push(v);if(!S.part.includes(v))S.part.push(v);$("#ospite").value="";salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
+$("#addAuto").addEventListener("click",()=>{const usati=S.auto.map(a=>a.tipo);const d=tariffe.find(t=>!usati.includes(t.id)&&t.id!=="fire_g")||tariffe[0];
+  const a={tipo:d.id,autista:d.autista,partenza:d.partenza,km:"",kmS:""};a.km=kmPer(a);S.auto.push(a);
+  if(a.autista&&!S.part.includes(a.autista)&&membri.includes(a.autista))S.part.push(a.autista);
+  salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
+$("#auto").addEventListener("input",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||!k)return;const a=S.auto[+v.dataset.i];a[k]=e.target.value;
+  if(k==="tipo"){const d=autoDef(a.tipo);a.autista=d.autista||a.autista;a.partenza=d.partenza;a.km=kmPer(a);if(d.sterrato==null)a.kmS="";if(a.autista&&membri.includes(a.autista)&&!S.part.includes(a.autista))S.part.push(a.autista);salvaBozza();renderChips();renderAuto();renderCibo()}
+  else if(k==="partenza"){a.km=kmPer(a);salvaBozza();renderAuto()}
+  else{salvaBozza();aggiornaCostiAuto()}
+  renderRisultato()});
+$("#auto").addEventListener("click",e=>{const b=e.target.closest("[data-del-auto]");if(!b)return;S.auto.splice(+b.dataset.delAuto,1);salvaBozza();renderAuto();renderRisultato()});
+$("#addCibo").addEventListener("click",()=>{S.cibo.push({chi:"",cosa:"",euro:""});salvaBozza();renderCibo()});
+$("#cibo").addEventListener("input",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||!k)return;S.cibo[+v.dataset.c][k]=e.target.value;salvaBozza();renderRisultato()});
+$("#cibo").addEventListener("click",e=>{const b=e.target.closest("[data-del-cibo]");if(!b)return;S.cibo.splice(+b.dataset.delCibo,1);salvaBozza();renderCibo();renderRisultato()});
+
+async function copia(t){try{await navigator.clipboard.writeText(t);toast("Testo copiato")}catch(e){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();toast("Testo copiato")}}
+function condividi(t){if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}}
+$("#risultato").addEventListener("click",e=>{
+  const id=e.target.id;
+  if(id==="condividi")condividi(testoWhatsApp());
+  if(id==="copia")copia(testoWhatsApp());
+  if(id==="salvaUscita"){const R=calcola(),d=destDef();const st=load("gv_storico",[]);
+    const titolo=(S.data?new Date(S.data+"T12:00").toLocaleDateString("it-IT"):"")+" – "+(d&&d.id!=="altro"?d.nome:"Uscita");
+    st.unshift({titolo,n:R.n,tot:R.tot,quota:R.quota,testo:testoWhatsApp(),stato:JSON.parse(JSON.stringify(S))});save("gv_storico",st.slice(0,100));renderStorico();toast("Uscita salvata")}
+  if(id==="nuova"){if(confirm("Iniziare una nuova uscita? I dati non salvati andranno persi.")){S=nuovaUscita();salvaBozza();renderTutto();window.scrollTo(0,0)}}
+});
+$("#storico").addEventListener("click",e=>{const st=load("gv_storico",[]);const b=e.target;
+  if(b.dataset.share!=null)condividi(st[+b.dataset.share].testo);
+  if(b.dataset.apri!=null){S=JSON.parse(JSON.stringify(st[+b.dataset.apri].stato));salvaBozza();renderTutto();window.scrollTo(0,0);toast("Uscita riaperta")}
+  if(b.dataset.canc!=null&&confirm("Eliminare questa uscita?")){st.splice(+b.dataset.canc,1);save("gv_storico",st);renderStorico()}});
+$("#salvaImp").addEventListener("click",()=>{
+  document.querySelectorAll("#tariffe [data-t]").forEach(inp=>{const t=tariffe[+inp.dataset.t],k=inp.dataset.k;
+    if(k==="autista")t.autista=inp.value.trim();else if(k==="sterrato")t.sterrato=inp.value.trim()===""?null:num(inp.value);else t.strada=num(inp.value)});
+  membri=$("#membri").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  save("gv_tariffe",tariffe);save("gv_membri",membri);renderTariffe();renderTutto();toast("Tariffe e componenti salvati")});
+$("#resetImp").addEventListener("click",()=>{if(!confirm("Ripristinare tariffe e componenti iniziali?"))return;
+  tariffe=JSON.parse(JSON.stringify(AUTO_BASE));membri=[...MEMBRI_BASE];save("gv_tariffe",tariffe);save("gv_membri",membri);renderTariffe();renderTutto();toast("Valori iniziali ripristinati")});
+
+renderTariffe();renderTutto();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
