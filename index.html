@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" data-app="venerdi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -12,8 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NN6FP74TCW"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NN6FP74TCW');</script>
+<script src="/analytics.js"></script>
 <style>
 :root{
   --cenere:#E5E7E1; --carta:#F8F9F5; --basalto:#22272B; --pino:#2F5D46;
@@ -137,13 +136,15 @@ footer a{color:var(--pino)}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const MEMBRI_BASE=["Alfredo","Salvo Di Giovanni","Masino","Lorenzo","Turi La Piana","Angelino","Sebastiano","Nino Scalia","General Nino","Nino Cannata","Michele","Turi Russo","Franco Giovanni","Salvo Gullotto","Giuseppe Spuria","Salvatore Di Mauro"];
+const MEMBRI_BASE=["Alfredo","Salvo Di Giovanni","Masino","Lorenzo","Turi La Piana","Angelino","Sebastiano","Nino Scalia","General Nino","Nino Cannata","Michele","Turi Russo","Franco Giovanni","Salvo Gullotto","Giuseppe Spuria","Salvatore Di Mauro","Isidoro"];
 const AUTO_BASE=[
  {id:"peugeot",nome:"Peugeot 2008 diesel",autista:"Alfredo",partenza:"riposto",strada:0.29,sterrato:null},
  {id:"fire_b",nome:"Panda 4x4 1100 Fire (benzina)",autista:"Angelino",partenza:"riposto",strada:0.30,sterrato:0.40},
  {id:"fire_g",nome:"Panda 4x4 1100 Fire (GPL)",autista:"Angelino",partenza:"riposto",strada:0.20,sterrato:0.30},
  {id:"panda80",nome:"Panda 4x4 965 cc (1980)",autista:"Nino Scalia",partenza:"riposto",strada:0.28,sterrato:0.38},
  {id:"mitsu",nome:"Mitsubishi 4x4 cabinato",autista:"Franco Giovanni",partenza:"randazzo",strada:0.42,sterrato:0.52},
+ {id:"tesla",nome:"Tesla elettrica (ricarica a casa)",autista:"Isidoro",partenza:"riposto",strada:0.27,sterrato:null},
+ {id:"tesla_c",nome:"Tesla elettrica (colonnina)",autista:"Isidoro",partenza:"riposto",strada:0.34,sterrato:null},
  {id:"altra",nome:"Altra auto",autista:"",partenza:"riposto",strada:0.30,sterrato:0.40}
 ];
 const DEST=[
@@ -153,9 +154,11 @@ const DEST=[
  {id:"saletti",nome:"Rifugio Saletti (muro di sbarramento)",riposto:79,randazzo:33,nota:"Strada asfaltata fino al parcheggio, va bene per tutte le auto. Km stimati."},
  {id:"smbosco",nome:"Santa Maria del Bosco (da S. Domenica Vittoria)",riposto:103,randazzo:23,nota:"Parcheggio al Parco Sub Urbano. Km stimati."},
  {id:"camisa",nome:"Area attrezzata Camisa (cancello)",riposto:109,randazzo:25,nota:"Strada per il Vivaio Flascio dissestata. In auto oltre il cancello solo con autorizzazione della Forestale (+8 km sterrato). Km stimati."},
+ {id:"lapiana",nome:"Casa La Piana (vendemmia)",riposto:77,randazzo:15,nota:""},
  {id:"altro",nome:"Altra destinazione (km a mano)",riposto:null,randazzo:null,nota:"Inserisci i km di ogni auto: andata + ritorno + 5 km di giri."}
 ];
 
+const ev=(n,p)=>{try{window.traccia&&traccia(n,p||{})}catch(e){}};
 const $=s=>document.querySelector(s);
 const num=v=>{const n=parseFloat(String(v??"").replace(",","."));return isFinite(n)?n:0};
 const eur=n=>n.toLocaleString("it-IT",{style:"currency",currency:"EUR"});
@@ -168,6 +171,8 @@ function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");c
 
 let membri=load("gv_membri",MEMBRI_BASE);
 let tariffe=load("gv_tariffe",AUTO_BASE);
+AUTO_BASE.forEach(b=>{if(!tariffe.find(t=>t.id===b.id))tariffe.splice(tariffe.length-1,0,JSON.parse(JSON.stringify(b)))});
+if(!membri.includes("Isidoro")&&!load("gv_isidoro",false)){membri.push("Isidoro");save("gv_isidoro",true)}
 const oggi=new Date().toISOString().slice(0,10);
 let S=load("gv_bozza",null)||nuovaUscita();
 function nuovaUscita(){return {data:oggi,dest:"",part:[],ospiti:[],auto:[],cibo:[{chi:"",cosa:"",euro:""}]}}
@@ -288,7 +293,7 @@ $("#dest").addEventListener("change",e=>{S.dest=e.target.value;S.auto.forEach(a=
 $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const n=b.dataset.nome;
   S.part=S.part.includes(n)?S.part.filter(x=>x!==n):[...S.part,n];salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
 $("#addOspite").addEventListener("click",()=>{const v=$("#ospite").value.trim();if(!v)return;if(!tutti().includes(v))S.ospiti.push(v);if(!S.part.includes(v))S.part.push(v);$("#ospite").value="";salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
-$("#addAuto").addEventListener("click",()=>{const usati=S.auto.map(a=>a.tipo);const d=tariffe.find(t=>!usati.includes(t.id)&&t.id!=="fire_g")||tariffe[0];
+$("#addAuto").addEventListener("click",()=>{const usati=S.auto.map(a=>a.tipo);const d=tariffe.find(t=>!usati.includes(t.id)&&t.id!=="fire_g"&&t.id!=="tesla_c")||tariffe[0];
   const a={tipo:d.id,autista:d.autista,partenza:d.partenza,km:"",kmS:""};a.km=kmPer(a);S.auto.push(a);
   if(a.autista&&!S.part.includes(a.autista)&&membri.includes(a.autista))S.part.push(a.autista);
   salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
@@ -306,11 +311,11 @@ async function copia(t){try{await navigator.clipboard.writeText(t);toast("Testo 
 function condividi(t){if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}}
 $("#risultato").addEventListener("click",e=>{
   const id=e.target.id;
-  if(id==="condividi")condividi(testoWhatsApp());
-  if(id==="copia")copia(testoWhatsApp());
+  if(id==="condividi"){condividi(testoWhatsApp());const R=calcola(),d=destDef();ev("conti_condivisi",{destinazione:d?d.nome:"",partecipanti:R.n})}
+  if(id==="copia"){copia(testoWhatsApp());ev("conti_copiati")}
   if(id==="salvaUscita"){const R=calcola(),d=destDef();const st=load("gv_storico",[]);
     const titolo=(S.data?new Date(S.data+"T12:00").toLocaleDateString("it-IT"):"")+" – "+(d&&d.id!=="altro"?d.nome:"Uscita");
-    st.unshift({titolo,n:R.n,tot:R.tot,quota:R.quota,testo:testoWhatsApp(),stato:JSON.parse(JSON.stringify(S))});save("gv_storico",st.slice(0,100));renderStorico();toast("Uscita salvata")}
+    st.unshift({titolo,n:R.n,tot:R.tot,quota:R.quota,testo:testoWhatsApp(),stato:JSON.parse(JSON.stringify(S))});save("gv_storico",st.slice(0,100));renderStorico();toast("Uscita salvata");ev("uscita_salvata",{destinazione:d?d.nome:""})}
   if(id==="nuova"){if(confirm("Iniziare una nuova uscita? I dati non salvati andranno persi.")){S=nuovaUscita();salvaBozza();renderTutto();window.scrollTo(0,0)}}
 });
 $("#storico").addEventListener("click",e=>{const st=load("gv_storico",[]);const b=e.target;
