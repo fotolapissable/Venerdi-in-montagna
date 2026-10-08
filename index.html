@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="it" data-app="venerdi">
-<head><script src="/analytics.js" data-id="G-NN6FP74TCW" data-app="NOME-APP" defer></script>
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Venerdì in montagna – Conti del gruppo</title>
@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-<script src="/analytics.js"></script>
+<script src="/analytics.js" data-id="G-NN6FP74TCW" data-app="venerdi" defer></script>
 <style>
 :root{
   --cenere:#E5E7E1; --carta:#F8F9F5; --basalto:#22272B; --pino:#2F5D46;
@@ -34,10 +34,15 @@ section.step{background:var(--carta);border:1px solid var(--linea);border-radius
 .step h2{margin:0 0 10px;font-size:1.15rem;display:flex;gap:10px;align-items:center}
 .step h2 .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--pino);color:#fff;display:grid;place-items:center;font-size:.95rem}
 label{display:block;font-weight:700;font-size:.95rem;margin:10px 0 4px}
-input,select,textarea{font:inherit;font-size:1rem;width:100%;padding:11px 12px;border:1.5px solid var(--linea);border-radius:8px;background:#fff;color:var(--basalto);min-height:48px}
+input,select,textarea{font:inherit;font-weight:400;font-size:1rem;width:100%;padding:11px 12px;border:1.5px solid var(--linea);border-radius:8px;background:#fff;color:var(--basalto);min-height:48px}
+label>input,label>select,label>textarea{margin-top:4px}
+input:disabled{background:var(--cenere);color:var(--muschio)}
 input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--ginestra);outline-offset:1px;border-color:var(--pino)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.spunta{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:400}
+label.spunta input{width:24px;height:24px;min-height:0;margin:0;padding:0;flex:none;accent-color:var(--pino)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
 .hint{color:var(--muschio);font-size:.9rem;margin:6px 0 0}
+.hint a{color:var(--pino)}
 button{font:inherit;cursor:pointer;border-radius:8px;min-height:48px;padding:10px 16px;border:1.5px solid var(--pino);background:#fff;color:var(--pino);font-weight:700}
 button.pieno{background:var(--pino);color:#fff}
 button.piccolo{min-height:40px;padding:6px 12px;font-size:.9rem}
@@ -51,6 +56,8 @@ button.via{border-color:var(--linea);color:var(--muschio);background:transparent
 .voce .costo{font-weight:700}
 .azioni{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
 .avviso{background:#FBEAE6;border-left:4px solid var(--lava);padding:8px 10px;border-radius:6px;margin-top:10px;font-size:.95rem}
+.nota{background:var(--pino-chiaro);border-left:4px solid var(--pino);padding:8px 10px;border-radius:6px;margin-top:10px;font-size:.95rem}
+.nota button{margin-top:8px}
 /* il cartello: elemento distintivo */
 .cartello{position:relative;background:var(--ginestra);color:var(--basalto);padding:16px 64px 16px 18px;margin:6px 0 14px;
   clip-path:polygon(0 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,0 100%);border-radius:6px 0 0 6px}
@@ -66,9 +73,10 @@ td.num,th.num{text-align:right;white-space:nowrap}
 .riepilogo td{border:none;padding:4px 6px}
 details{margin-top:14px;background:var(--carta);border:1px solid var(--linea);border-radius:var(--r);padding:12px 14px}
 summary{font-weight:700;cursor:pointer;min-height:32px}
+h3.gruppo{margin:26px 0 0;font-size:1rem;color:var(--muschio)}
 .storico-voce{border-top:1px solid var(--linea);padding:10px 0}
 .storico-voce:first-child{border-top:none}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:var(--basalto);color:#fff;padding:12px 18px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:var(--basalto);color:#fff;padding:12px 18px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
 .toast.on{opacity:1}
 footer{text-align:center;color:var(--muschio);font-size:.85rem;margin-top:24px}
 footer a{color:var(--pino)}
@@ -86,7 +94,9 @@ footer a{color:var(--pino)}
     <h2 id="h1s"><span class="n">1</span>Uscita</h2>
     <label for="data">Data</label><input type="date" id="data">
     <label for="dest">Destinazione</label><select id="dest"></select>
+    <div id="destNomeBox" hidden><label for="destNome">Nome del posto</label><input id="destNome" placeholder="Dove andate?"></div>
     <p class="hint" id="destNota"></p>
+    <div class="azioni"><button class="piccolo" id="nuovaDest">Aggiungi una destinazione all'elenco</button></div>
   </section>
 
   <section class="step" aria-labelledby="h2s">
@@ -121,132 +131,235 @@ footer a{color:var(--pino)}
     <div id="storico"></div>
   </details>
 
-  <details>
-    <summary>Tariffe e componenti</summary>
-    <p class="hint">Le modifiche restano salvate su questo telefono.</p>
-    <div id="tariffe"></div>
-    <label for="membri">Componenti del gruppo (uno per riga)</label>
-    <textarea id="membri" rows="8"></textarea>
-    <div class="azioni"><button class="pieno" id="salvaImp">Salva tariffe e componenti</button><button class="via" id="resetImp">Ripristina i valori iniziali</button></div>
+  <h3 class="gruppo">Impostazioni</h3>
+  <p class="hint">Ogni modifica si salva da sola e resta su questo telefono.</p>
+
+  <details id="boxDest">
+    <summary>Destinazioni</summary>
+    <p class="hint">Km da contare: andata + ritorno + 5 km di giri. Lascia vuoto il punto di partenza che non conosci.</p>
+    <div id="impDest"></div>
+    <div class="azioni"><button id="addDest">Aggiungi una destinazione</button></div>
   </details>
 
+  <details id="boxPrezzi">
+    <summary>Prezzi dei carburanti</summary>
+    <p class="hint">Cambiando un prezzo, le tariffe al km di tutte le auto si ricalcolano. Prezzi medi della Sicilia sul
+      <a href="https://www.mimit.gov.it/it/prezzo-medio-carburanti/regioni" target="_blank" rel="noopener">sito del Ministero</a>.</p>
+    <div id="impPrezzi"></div>
+    <div id="riepTariffe"></div>
+  </details>
+
+  <details id="boxAuto">
+    <summary>Auto e tariffe</summary>
+    <p class="hint">Tariffa al km = carburante (consumo × prezzo) + altri costi (manutenzione, gomme, assicurazione, bollo, ammortamento).</p>
+    <div id="impAuto"></div>
+    <div class="azioni"><button id="addTipoAuto">Aggiungi un'auto</button></div>
+  </details>
+
+  <details id="boxMembri">
+    <summary>Componenti del gruppo</summary>
+    <label for="membri">Uno per riga</label>
+    <textarea id="membri" rows="10"></textarea>
+  </details>
+
+  <div class="azioni"><button class="via" id="resetImp">Ripristina le impostazioni iniziali</button></div>
+
   <footer>Tariffe al km calcolate su carburante, manutenzione, gomme, assicurazione, bollo e ammortamento.<br>
+  <span id="piePrezzi"></span><br>
   <a href="https://apps.fotolapissable.it/">apps.fotolapissable.it</a></footer>
 </main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
+/* ---- valori iniziali ---- */
 const MEMBRI_BASE=["Alfredo","Salvo Di Giovanni","Masino","Lorenzo","Turi La Piana","Angelino","Sebastiano","Nino Scalia","General Nino","Nino Cannata","Michele","Turi Russo","Franco Giovanni","Salvo Gullotto","Giuseppe Spuria","Salvatore Di Mauro","Isidoro"];
+/* prezzi con cui sono state calcolate le tariffe concordate col gruppo */
+const PREZZI_BASE={benzina:2.15,gasolio:2.34,gpl:0.88,metano:1.75,casa:0.30,colonnina:0.71,data:"2026-09-24"};
+const CARB={
+ benzina:{nome:"Benzina",um:"l",prezzo:"€/litro"},
+ gasolio:{nome:"Gasolio",um:"l",prezzo:"€/litro"},
+ gpl:{nome:"GPL",um:"l",prezzo:"€/litro"},
+ metano:{nome:"Metano",um:"kg",prezzo:"€/kg"},
+ casa:{nome:"Elettrica, ricarica a casa",um:"kWh",prezzo:"€/kWh"},
+ colonnina:{nome:"Elettrica, colonnina",um:"kWh",prezzo:"€/kWh"}
+};
+/* cons = consumo per 100 km; altri = costi non di carburante €/km; sterr = sovrapprezzo sterrato €/km (null = non adatta) */
 const AUTO_BASE=[
- {id:"peugeot",nome:"Peugeot 2008 diesel",autista:"Alfredo",partenza:"riposto",strada:0.29,sterrato:null},
- {id:"fire_b",nome:"Panda 4x4 1100 Fire (benzina)",autista:"Angelino",partenza:"riposto",strada:0.30,sterrato:0.40},
- {id:"fire_g",nome:"Panda 4x4 1100 Fire (GPL)",autista:"Angelino",partenza:"riposto",strada:0.20,sterrato:0.30},
- {id:"panda80",nome:"Panda 4x4 965 cc (1980)",autista:"Nino Scalia",partenza:"riposto",strada:0.28,sterrato:0.38},
- {id:"mitsu",nome:"Mitsubishi 4x4 cabinato",autista:"Franco Giovanni",partenza:"randazzo",strada:0.42,sterrato:0.52},
- {id:"tesla",nome:"Tesla elettrica (ricarica a casa)",autista:"Isidoro",partenza:"riposto",strada:0.27,sterrato:null},
- {id:"tesla_c",nome:"Tesla elettrica (colonnina)",autista:"Isidoro",partenza:"riposto",strada:0.34,sterrato:null},
- {id:"altra",nome:"Altra auto",autista:"",partenza:"riposto",strada:0.30,sterrato:0.40}
+ {id:"peugeot",nome:"Peugeot 2008 diesel",autista:"Alfredo",partenza:"riposto",carb:"gasolio",cons:5.5,altri:0.161,sterr:null},
+ {id:"fire_b",nome:"Panda 4x4 1100 Fire (benzina)",autista:"Angelino",partenza:"riposto",carb:"benzina",cons:9,altri:0.106,sterr:0.10},
+ {id:"fire_g",nome:"Panda 4x4 1100 Fire (GPL)",autista:"Angelino",partenza:"riposto",carb:"gpl",cons:11,altri:0.103,sterr:0.10},
+ {id:"panda80",nome:"Panda 4x4 965 cc (1980)",autista:"Nino Scalia",partenza:"riposto",carb:"benzina",cons:8,altri:0.108,sterr:0.10},
+ {id:"mitsu",nome:"Mitsubishi 4x4 cabinato",autista:"Franco Giovanni",partenza:"randazzo",carb:"gasolio",cons:10.5,altri:0.174,sterr:0.10},
+ {id:"tesla",nome:"Tesla elettrica (ricarica a casa)",autista:"Isidoro",partenza:"riposto",carb:"casa",cons:17,altri:0.219,sterr:null},
+ {id:"tesla_c",nome:"Tesla elettrica (colonnina)",autista:"Isidoro",partenza:"riposto",carb:"colonnina",cons:17,altri:0.219,sterr:null},
+ {id:"altra",nome:"Altra auto",autista:"",partenza:"riposto",carb:"benzina",cons:7,altri:0.149,sterr:0.10}
 ];
-const DEST=[
+/* tariffe della versione precedente, servono solo per portare avanti le modifiche già fatte sul telefono */
+const V1={peugeot:0.29,fire_b:0.30,fire_g:0.20,panda80:0.28,mitsu:0.42,tesla:0.27,tesla_c:0.34,altra:0.30};
+const DEST_BASE=[
  {id:"roccella",nome:"Roccella Valdemone",riposto:111,randazzo:37,nota:""},
  {id:"sartorius",nome:"Monti Sartorius (parcheggio)",riposto:59,randazzo:73,nota:""},
  {id:"crisimo",nome:"Rifugio Monte Crisimo (bivio quota 1000)",riposto:46.8,randazzo:41,nota:"Oltre il parcheggio proseguono solo Panda e Mitsubishi: inserisci i km di sterrato."},
  {id:"saletti",nome:"Rifugio Saletti (muro di sbarramento)",riposto:79,randazzo:33,nota:"Strada asfaltata fino al parcheggio, va bene per tutte le auto. Km stimati."},
  {id:"smbosco",nome:"Santa Maria del Bosco (da S. Domenica Vittoria)",riposto:103,randazzo:23,nota:"Parcheggio al Parco Sub Urbano. Km stimati."},
  {id:"camisa",nome:"Area attrezzata Camisa (cancello)",riposto:109,randazzo:25,nota:"Strada per il Vivaio Flascio dissestata. In auto oltre il cancello solo con autorizzazione della Forestale (+8 km sterrato). Km stimati."},
- {id:"lapiana",nome:"Casa La Piana (vendemmia)",riposto:77,randazzo:15,nota:""},
- {id:"altro",nome:"Altra destinazione (km a mano)",riposto:null,randazzo:null,nota:"Inserisci i km di ogni auto: andata + ritorno + 5 km di giri."}
+ {id:"lapiana",nome:"Casa La Piana (vendemmia)",riposto:77,randazzo:15,nota:""}
 ];
+const ALTRO={id:"altro",nome:"Altra destinazione (km a mano)",riposto:null,randazzo:null,nota:"Inserisci i km di ogni auto: andata + ritorno + 5 km di giri."};
 
+/* ---- utilità ---- */
 const ev=(n,p)=>{try{window.traccia&&traccia(n,p||{})}catch(e){}};
 const $=s=>document.querySelector(s);
-const num=v=>{const n=parseFloat(String(v??"").replace(",","."));return isFinite(n)?n:0};
+const num=v=>{const n=parseFloat(String(v??"").replace(",","."));return isFinite(n)&&n>0?n:0};
+const r2=n=>Math.round((n+1e-9)*100)/100;
+const r4=n=>Math.round(n*10000)/10000;
+const clone=o=>JSON.parse(JSON.stringify(o));
+const nuovoId=p=>p+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36);
 const eur=n=>n.toLocaleString("it-IT",{style:"currency",currency:"EUR"});
 const tar=n=>n==null?"–":n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+const dec=(n,max)=>n==null||n===""?"":Number(n).toLocaleString("it-IT",{useGrouping:false,maximumFractionDigits:max??3});
 const km=n=>n.toLocaleString("it-IT",{maximumFractionDigits:1});
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const oggi=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+const dataIt=(s,o)=>s?new Date(s+"T12:00").toLocaleDateString("it-IT",o):"";
 function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2200)}
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2400)}
+const lista=(v,def)=>Array.isArray(v)&&v.length?v:clone(def);
 
-let membri=load("gv_membri",MEMBRI_BASE);
-let tariffe=load("gv_tariffe",AUTO_BASE);
-AUTO_BASE.forEach(b=>{if(!tariffe.find(t=>t.id===b.id))tariffe.splice(tariffe.length-1,0,JSON.parse(JSON.stringify(b)))});
-if(!membri.includes("Isidoro")&&!load("gv_isidoro",false)){membri.push("Isidoro");save("gv_isidoro",true)}
-const oggi=new Date().toISOString().slice(0,10);
-let S=load("gv_bozza",null)||nuovaUscita();
-function nuovaUscita(){return {data:oggi,dest:"",part:[],ospiti:[],auto:[],cibo:[{chi:"",cosa:"",euro:""}]}}
-const autoDef=id=>tariffe.find(a=>a.id===id)||tariffe[0];
-const destDef=()=>DEST.find(d=>d.id===S.dest);
-function salvaBozza(){save("gv_bozza",S)}
+/* ---- dati salvati ---- */
+let membri=lista(load("gv_membri",null),MEMBRI_BASE);
+if(!membri.includes("Isidoro")&&!load("gv_isidoro",false)){membri.push("Isidoro");save("gv_membri",membri)}
+save("gv_isidoro",true);
+let prezzi={...PREZZI_BASE,...(load("gv_prezzi",null)||{})};
+let auto=caricaAuto();
+let dest=lista(load("gv_dest",null),DEST_BASE);
+(function nuoviValoriBase(){
+  /* aggiunge solo le voci iniziali mai viste su questo telefono: quelle eliminate a mano non tornano */
+  const viste=load("gv_viste",null), prima=!viste, v=viste||[];
+  const metti=(arr,b)=>{const i=arr.findIndex(x=>x.id==="altra");i<0?arr.push(clone(b)):arr.splice(i,0,clone(b))};
+  AUTO_BASE.forEach(b=>{if(!v.includes("a:"+b.id)&&!auto.find(x=>x.id===b.id))metti(auto,b)});
+  if(!prima)DEST_BASE.forEach(b=>{if(!v.includes("d:"+b.id)&&!dest.find(x=>x.id===b.id))dest.push(clone(b))});
+  save("gv_viste",[...AUTO_BASE.map(b=>"a:"+b.id),...DEST_BASE.map(b=>"d:"+b.id)]);
+  save("gv_auto2",auto);save("gv_dest",dest);
+})();
+function caricaAuto(){
+  const a=load("gv_auto2",null);
+  if(Array.isArray(a)&&a.length)return a;
+  const v1=load("gv_tariffe",null);
+  if(!Array.isArray(v1)||!v1.length)return clone(AUTO_BASE);
+  return v1.map(o=>{
+    const b=AUTO_BASE.find(x=>x.id===o.id)||AUTO_BASE[AUTO_BASE.length-1];
+    const c={...b,id:o.id,nome:o.nome||b.nome,autista:o.autista||"",partenza:o.partenza||"riposto"};
+    const s=Number(o.strada)||0;
+    if(Math.abs((V1[o.id]??-1)-s)>0.0001)c.altri=Math.max(0,r4(s-b.cons*PREZZI_BASE[b.carb]/100));
+    c.sterr=o.sterrato==null?null:Math.max(0,r4(o.sterrato-s));
+    return c});
+}
+function nuovaUscita(){return {data:oggi(),dest:"",destNome:"",part:[],ospiti:[],auto:[],cibo:[{chi:"",cosa:"",euro:""}]}}
+let S={...nuovaUscita(),...(load("gv_bozza",null)||{})};
+normalizza();
 
-/* ---- rendering ---- */
+/* ---- tariffe ---- */
+function tariffaDi(c){
+  const carb=num(c.cons)*num(prezzi[c.carb])/100, s=r2(carb+num(c.altri));
+  return {strada:s,sterrato:c.sterr==null?null:r2(s+num(c.sterr)),carb};
+}
+/* scheda dell'auto usata in un'uscita: tariffe attuali, oppure quelle del giorno se l'uscita è stata riaperta */
+function defDi(a){
+  const c=auto.find(x=>x.id===a.tipo);
+  if(S.fisse&&a.snap)return {...a.snap,manca:!c};
+  if(c){const t=tariffaDi(c);return {nome:c.nome,autista:c.autista,partenza:c.partenza,strada:t.strada,sterrato:t.sterrato}}
+  if(a.snap)return {...a.snap,manca:true};
+  return {nome:"Auto non più in elenco",strada:0,sterrato:null,manca:true};
+}
+function fotografa(a){const c=auto.find(x=>x.id===a.tipo);if(c){const t=tariffaDi(c);a.snap={nome:c.nome,strada:t.strada,sterrato:t.sterrato}}}
+const destDef=()=>S.dest==="altro"?ALTRO:dest.find(d=>d.id===S.dest);
+const nomeDest=()=>{const d=destDef();return !d?"":d.id==="altro"?(S.destNome||"").trim():d.nome};
+function normalizza(){
+  ["part","ospiti","auto","cibo"].forEach(k=>{if(!Array.isArray(S[k]))S[k]=[]});
+  if(S.dest&&S.dest!=="altro"&&!dest.find(d=>d.id===S.dest)){S.destNome=S.destSnap||"";S.dest="altro"}
+}
+function salvaBozza(){
+  if(!S.fisse)S.auto.forEach(fotografa);
+  const d=destDef();if(d&&d.id!=="altro")S.destSnap=d.nome;
+  save("gv_bozza",S);
+}
+
+/* ---- rendering: uscita ---- */
 function renderDest(){
   $("#data").value=S.data;
-  $("#dest").innerHTML='<option value="">Scegli…</option>'+DEST.map(d=>`<option value="${d.id}" ${d.id===S.dest?"selected":""}>${esc(d.nome)}</option>`).join("");
-  const d=destDef();
-  $("#destNota").textContent=d?(d.riposto!=null?`Km conteggiati: ${km(d.riposto)} da Riposto, ${km(d.randazzo)} da Randazzo. `:"")+d.nota:"";
+  $("#dest").innerHTML='<option value="">Scegli…</option>'+[...dest,ALTRO].map(d=>`<option value="${esc(d.id)}" ${d.id===S.dest?"selected":""}>${esc(d.nome||"Nuova destinazione")}</option>`).join("");
+  const d=destDef(), pezzi=[];
+  if(d&&d.riposto!=null)pezzi.push(`${km(d.riposto)} da Riposto`);
+  if(d&&d.randazzo!=null)pezzi.push(`${km(d.randazzo)} da Randazzo`);
+  $("#destNota").textContent=d?(pezzi.length?`Km conteggiati: ${pezzi.join(", ")}. `:"")+(d.nota||""):"";
+  $("#destNomeBox").hidden=S.dest!=="altro";
+  if(document.activeElement!==$("#destNome"))$("#destNome").value=S.destNome||"";
 }
-function tutti(){return [...membri,...S.ospiti]}
+function tutti(){return [...new Set([...membri,...S.ospiti,...S.part])]}
 function renderChips(){
   $("#chips").innerHTML=tutti().map(n=>`<button class="chip" data-nome="${esc(n)}" aria-pressed="${S.part.includes(n)}">${esc(n)}</button>`).join("");
   $("#nPart").textContent=S.part.length?`(${S.part.length})`:"";
 }
 function opzioniPersone(sel){
-  const lista=S.part.length?S.part:tutti();
-  return '<option value="">Chi?</option>'+lista.map(n=>`<option ${n===sel?"selected":""}>${esc(n)}</option>`).join("")+
-    (sel&&!lista.includes(sel)?`<option selected>${esc(sel)}</option>`:"");
+  const l=S.part.length?S.part:tutti();
+  return '<option value="">Chi?</option>'+l.map(n=>`<option ${n===sel?"selected":""}>${esc(n)}</option>`).join("")+
+    (sel&&!l.includes(sel)?`<option selected>${esc(sel)}</option>`:"");
 }
 function renderAuto(){
-  $("#auto").innerHTML=S.auto.map((a,i)=>{const d=autoDef(a.tipo);return `
+  const fisse=S.fisse&&S.auto.some(a=>a.snap)?`<div class="nota">Uscita salvata: i conti usano le tariffe di quel giorno.<br><button class="piccolo" id="sblocca">Usa le tariffe di oggi</button></div>`:"";
+  $("#auto").innerHTML=fisse+(S.auto.map((a,i)=>{const d=defDi(a);return `
   <div class="voce" data-i="${i}">
     <div class="testa"><strong>Auto ${i+1}</strong><button class="piccolo via" data-del-auto="${i}" aria-label="Togli auto ${i+1}">Togli</button></div>
-    <label>Auto</label>
-    <select data-k="tipo">${tariffe.map(t=>`<option value="${t.id}" ${t.id===a.tipo?"selected":""}>${esc(t.nome)} – ${tar(t.strada)} €/km</option>`).join("")}</select>
+    <label>Auto
+    <select data-k="tipo">${d.manca?`<option value="${esc(a.tipo)}" selected>${esc(d.nome)} (non più in elenco) – ${tar(d.strada)} €/km</option>`:""}${auto.map(t=>`<option value="${esc(t.id)}" ${t.id===a.tipo?"selected":""}>${esc(t.nome||"Auto senza nome")} – ${tar(t.id===a.tipo?d.strada:tariffaDi(t).strada)} €/km</option>`).join("")}</select></label>
     <div class="row">
-      <div><label>Autista</label><select data-k="autista">${opzioniPersone(a.autista)}</select></div>
-      <div><label>Parte da</label><select data-k="partenza"><option value="riposto" ${a.partenza==="riposto"?"selected":""}>Riposto</option><option value="randazzo" ${a.partenza==="randazzo"?"selected":""}>Randazzo</option></select></div>
+      <label>Autista<select data-k="autista">${opzioniPersone(a.autista)}</select></label>
+      <label>Parte da<select data-k="partenza"><option value="riposto" ${a.partenza==="riposto"?"selected":""}>Riposto</option><option value="randazzo" ${a.partenza==="randazzo"?"selected":""}>Randazzo</option></select></label>
     </div>
     <div class="row">
-      <div><label>Km strada</label><input inputmode="decimal" data-k="km" value="${esc(a.km)}"></div>
-      <div><label>Km sterrato</label><input inputmode="decimal" data-k="kmS" value="${esc(a.kmS)}" ${d.sterrato==null?'disabled placeholder="non adatta"':'placeholder="0"'}></div>
+      <label>Km strada<input inputmode="decimal" data-k="km" value="${esc(a.km)}"></label>
+      <label>Km sterrato<input inputmode="decimal" data-k="kmS" value="${esc(a.kmS)}" ${d.sterrato==null?'disabled placeholder="non adatta"':'placeholder="0"'}></label>
     </div>
     <p class="hint">Costo: <span class="costo" data-costo="${i}"></span></p>
-  </div>`}).join("")||'<p class="hint">Nessuna auto inserita.</p>';
+  </div>`}).join("")||'<p class="hint">Nessuna auto inserita.</p>');
   aggiornaCostiAuto();
 }
-function costoAuto(a){const d=autoDef(a.tipo);return num(a.km)*d.strada+(d.sterrato!=null?num(a.kmS)*d.sterrato:0)}
-function aggiornaCostiAuto(){S.auto.forEach((a,i)=>{const el=document.querySelector(`[data-costo="${i}"]`);if(el){const d=autoDef(a.tipo);
+function costoAuto(a){const d=defDi(a);return r2(num(a.km)*d.strada+(d.sterrato!=null?num(a.kmS)*d.sterrato:0))}
+function aggiornaCostiAuto(){S.auto.forEach((a,i)=>{const el=document.querySelector(`[data-costo="${i}"]`);if(el){const d=defDi(a);
   el.textContent=`${km(num(a.km))} km × ${tar(d.strada)}`+(num(a.kmS)&&d.sterrato!=null?` + ${km(num(a.kmS))} km × ${tar(d.sterrato)}`:"")+` = ${eur(costoAuto(a))}`}})}
 function renderCibo(){
   $("#cibo").innerHTML=S.cibo.map((c,i)=>`
   <div class="voce" data-c="${i}">
     <div class="testa"><strong>Spesa ${i+1}</strong><button class="piccolo via" data-del-cibo="${i}" aria-label="Togli spesa ${i+1}">Togli</button></div>
     <div class="row">
-      <div><label>Chi ha pagato</label><select data-k="chi">${opzioniPersone(c.chi)}</select></div>
-      <div><label>Importo €</label><input inputmode="decimal" data-k="euro" value="${esc(c.euro)}" placeholder="0,00"></div>
+      <label>Chi ha pagato<select data-k="chi">${opzioniPersone(c.chi)}</select></label>
+      <label>Importo €<input inputmode="decimal" data-k="euro" value="${esc(c.euro)}" placeholder="0,00"></label>
     </div>
-    <label>Cosa</label><input data-k="cosa" value="${esc(c.cosa)}" placeholder="Pane, carne, frutta…">
+    <label>Cosa<input data-k="cosa" value="${esc(c.cosa)}" placeholder="Pane, carne, frutta…"></label>
   </div>`).join("")||'<p class="hint">Nessuna spesa inserita.</p>';
 }
 
+/* ---- conti ---- */
 function calcola(){
-  const n=S.part.length;
-  const auto=S.auto.map(a=>({...a,def:autoDef(a.tipo),costo:costoAuto(a)})).filter(a=>a.costo>0);
+  const n=S.part.length, avvisi=[];
+  const tutte=S.auto.map(a=>({...a,def:defDi(a),costo:costoAuto(a)}));
+  tutte.filter(a=>!a.costo).forEach(a=>avvisi.push(`Mancano i km per ${a.def.nome}: per ora non entra nei conti.`));
+  const usate=tutte.filter(a=>a.costo>0);
   const cibo=S.cibo.filter(c=>num(c.euro)>0);
-  const totAuto=auto.reduce((s,a)=>s+a.costo,0), totCibo=cibo.reduce((s,c)=>s+num(c.euro),0), tot=totAuto+totCibo;
+  const totAuto=r2(usate.reduce((s,a)=>s+a.costo,0)), totCibo=r2(cibo.reduce((s,c)=>s+num(c.euro),0)), tot=r2(totAuto+totCibo);
   const quota=n?tot/n:0, speso={};
-  auto.forEach(a=>{if(a.autista)speso[a.autista]=(speso[a.autista]||0)+a.costo});
+  usate.forEach(a=>{if(a.autista)speso[a.autista]=(speso[a.autista]||0)+a.costo});
   cibo.forEach(c=>{if(c.chi)speso[c.chi]=(speso[c.chi]||0)+num(c.euro)});
   const righe=S.part.map(p=>({nome:p,speso:speso[p]||0,saldo:(speso[p]||0)-quota}));
-  const avvisi=[];
-  auto.forEach((a,i)=>{if(!a.autista)avvisi.push(`Manca l'autista per ${a.def.nome}.`);else if(!S.part.includes(a.autista))avvisi.push(`${a.autista} guida ma non è segnato tra i presenti.`)});
+  usate.forEach(a=>{if(!a.autista)avvisi.push(`Manca l'autista per ${a.def.nome}.`);else if(!S.part.includes(a.autista))avvisi.push(`${a.autista} guida ma non è segnato tra i presenti.`)});
   cibo.forEach(c=>{if(!c.chi)avvisi.push(`Manca chi ha pagato una spesa di ${eur(num(c.euro))}.`);else if(!S.part.includes(c.chi))avvisi.push(`${c.chi} ha pagato ma non è segnato tra i presenti.`)});
-  return {n,auto,cibo,totAuto,totCibo,tot,quota,righe,avvisi};
+  return {n,auto:usate,cibo,totAuto,totCibo,tot,quota,righe,avvisi:[...new Set(avvisi)]};
 }
 function renderRisultato(){
   const R=calcola();
-  if(!R.n||!R.tot){$("#risultato").innerHTML='<p class="hint">Segna chi c\'è e inserisci almeno un\'auto o una spesa per vedere i conti.</p>';return}
+  if(!R.n||!R.tot){$("#risultato").innerHTML=R.avvisi.map(a=>`<div class="avviso">${esc(a)}</div>`).join("")+'<p class="hint">Segna chi c\'è e inserisci almeno un\'auto o una spesa per vedere i conti.</p>';return}
   const riceve=R.righe.filter(r=>r.saldo>0.004), versa=R.righe.filter(r=>r.saldo<-0.004);
   $("#risultato").innerHTML=`
     <div class="cartello"><small>Quota a testa</small><strong>${eur(R.quota)}</strong><span>${eur(R.tot)} diviso ${R.n} ${R.n===1?"persona":"persone"}</span></div>
@@ -259,17 +372,18 @@ function renderRisultato(){
     <div class="azioni"><button class="pieno" id="condividi">Condividi su WhatsApp</button><button id="copia">Copia il testo</button><button id="salvaUscita">Salva l'uscita</button><button class="via" id="nuova">Nuova uscita</button></div>`;
 }
 function testoWhatsApp(){
-  const R=calcola(), d=destDef(), dt=S.data?new Date(S.data+"T12:00").toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long"}):"";
-  const L=[`*Uscita di ${dt}*`];
-  if(d&&d.id!=="altro")L.push(`📍 ${d.nome}`);
+  const R=calcola(), posto=nomeDest(), dt=dataIt(S.data,{weekday:"long",day:"numeric",month:"long"});
+  const L=[dt?`*Uscita di ${dt}*`:"*Uscita*"];
+  if(posto)L.push(`📍 ${posto}`);
   L.push(`👥 ${R.n} partecipanti`,"");
   if(R.cibo.length){L.push("*Cibo*");R.cibo.forEach(c=>L.push(`• ${c.chi||"?"}${c.cosa?" ("+c.cosa+")":""}: ${eur(num(c.euro))}`))}
   if(R.auto.length){L.push("*Auto*");R.auto.forEach(a=>{let t=`• ${a.def.nome} (${a.autista||"?"}): ${km(num(a.km))} km × ${tar(a.def.strada)}`;if(num(a.kmS)&&a.def.sterrato!=null)t+=` + ${km(num(a.kmS))} km sterrato × ${tar(a.def.sterrato)}`;L.push(t+` = ${eur(a.costo)}`)})}
   L.push("",`Totale: ${eur(R.tot)}`,`*Quota a testa: ${eur(R.quota)}*`,"");
   const ric=R.righe.filter(r=>r.saldo>0.004), ver=R.righe.filter(r=>r.saldo<-0.004);
+  const pieni=ver.filter(r=>Math.abs(-r.saldo-R.quota)<0.005), parte=ver.filter(r=>Math.abs(-r.saldo-R.quota)>=0.005);
   if(ric.length){L.push("*Ricevono*");ric.forEach(r=>L.push(`• ${r.nome}: ${eur(r.saldo)}`))}
-  if(ver.length){L.push("",`*Versano ${eur(R.quota)}*`);L.push(ver.filter(r=>Math.abs(-r.saldo-R.quota)<0.01).map(r=>r.nome).join(", "));
-    ver.filter(r=>Math.abs(-r.saldo-R.quota)>=0.01).forEach(r=>L.push(`${r.nome}: versa ${eur(-r.saldo)}`))}
+  if(pieni.length)L.push("",`*Versano ${eur(R.quota)}*`,pieni.map(r=>r.nome).join(", "));
+  if(parte.length){L.push("","*Versano la differenza*");parte.forEach(r=>L.push(`• ${r.nome}: ${eur(-r.saldo)}`))}
   return L.filter((x,i,a)=>!(x===""&&a[i-1]==="")).join("\n").trim();
 }
 function renderStorico(){
@@ -277,32 +391,69 @@ function renderStorico(){
   $("#storico").innerHTML=st.length?st.map((u,i)=>`<div class="storico-voce"><strong>${esc(u.titolo)}</strong><br><span class="hint">${u.n} persone, totale ${eur(u.tot)}, quota ${eur(u.quota)}</span>
     <div class="azioni"><button class="piccolo" data-apri="${i}">Riapri</button><button class="piccolo" data-share="${i}">Condividi</button><button class="piccolo via" data-canc="${i}">Elimina</button></div></div>`).join(""):'<p class="hint">Nessuna uscita salvata. Dopo i conti, tocca "Salva l\'uscita".</p>';
 }
-function renderTariffe(){
-  $("#tariffe").innerHTML=tariffe.map((t,i)=>`<div class="voce"><strong>${esc(t.nome)}</strong>
-   <div class="row"><div><label>€/km strada</label><input inputmode="decimal" data-t="${i}" data-k="strada" value="${tar(t.strada)}"></div>
-   <div><label>€/km sterrato</label><input inputmode="decimal" data-t="${i}" data-k="sterrato" value="${t.sterrato==null?"":tar(t.sterrato)}" placeholder="non adatta"></div></div>
-   <label>Autista abituale</label><input data-t="${i}" data-k="autista" value="${esc(t.autista)}"></div>`).join("");
-  $("#membri").value=membri.join("\n");
-}
-function renderTutto(){renderDest();renderChips();renderAuto();renderCibo();renderRisultato();renderStorico()}
 
-/* ---- eventi ---- */
+/* ---- rendering: impostazioni ---- */
+function renderImpDest(){
+  $("#impDest").innerHTML=dest.map((d,i)=>`<div class="voce" data-d="${i}">
+    <div class="testa"><strong data-titolo>${esc(d.nome||"Nuova destinazione")}</strong><button class="piccolo via" data-del-dest="${i}">Elimina</button></div>
+    <label>Nome<input data-k="nome" value="${esc(d.nome)}" placeholder="Es. Piano Provenzana"></label>
+    <div class="row"><label>Km da Riposto<input inputmode="decimal" data-k="riposto" value="${dec(d.riposto,1)}"></label>
+    <label>Km da Randazzo<input inputmode="decimal" data-k="randazzo" value="${dec(d.randazzo,1)}"></label></div>
+    <label>Nota<input data-k="nota" value="${esc(d.nota)}" placeholder="Strada, parcheggio, sterrato…"></label></div>`).join("")||'<p class="hint">Nessuna destinazione in elenco.</p>';
+}
+function renderImpPrezzi(){
+  $("#impPrezzi").innerHTML='<div class="row">'+Object.keys(CARB).map(k=>`<label>${CARB[k].nome} (${CARB[k].prezzo})<input inputmode="decimal" data-p="${k}" value="${dec(prezzi[k],3)}"></label>`).join("")+"</div>";
+  renderRiepTariffe();
+}
+function renderRiepTariffe(){
+  $("#riepTariffe").innerHTML=`<p class="hint">Prezzi aggiornati il ${dataIt(prezzi.data)}. Tariffe che ne risultano:</p>
+   <table><thead><tr><th>Auto</th><th class="num">Strada</th><th class="num">Sterrato</th></tr></thead><tbody>${auto.map(c=>{const t=tariffaDi(c);return `<tr><td>${esc(c.nome)}</td><td class="num">${tar(t.strada)}</td><td class="num">${tar(t.sterrato)}</td></tr>`}).join("")}</tbody></table>`;
+  $("#piePrezzi").textContent=`Prezzi dei carburanti aggiornati il ${dataIt(prezzi.data)}.`;
+}
+function rigaTariffa(c){const t=tariffaDi(c);
+  return `Tariffa: <strong>${tar(t.strada)} €/km</strong>${t.sterrato!=null?` strada, <strong>${tar(t.sterrato)}</strong> sterrato`:""} (carburante ${dec(r4(t.carb),3)} + altri ${dec(num(c.altri),3)})`}
+function renderImpAuto(){
+  $("#impAuto").innerHTML=auto.map((c,i)=>`<div class="voce" data-a="${i}">
+    <div class="testa"><strong data-titolo>${esc(c.nome||"Nuova auto")}</strong><button class="piccolo via" data-del-tipo="${i}">Elimina</button></div>
+    <label>Nome<input data-k="nome" value="${esc(c.nome)}" placeholder="Es. Fiat Panda benzina"></label>
+    <div class="row"><label>Autista abituale<input data-k="autista" value="${esc(c.autista)}"></label>
+    <label>Parte da<select data-k="partenza"><option value="riposto" ${c.partenza==="riposto"?"selected":""}>Riposto</option><option value="randazzo" ${c.partenza==="randazzo"?"selected":""}>Randazzo</option></select></label></div>
+    <div class="row"><label>Carburante<select data-k="carb">${Object.keys(CARB).map(k=>`<option value="${k}" ${k===c.carb?"selected":""}>${CARB[k].nome}</option>`).join("")}</select></label>
+    <label>Consumo (${CARB[c.carb].um}/100 km)<input inputmode="decimal" data-k="cons" value="${dec(c.cons,1)}"></label></div>
+    <div class="row"><label>Altri costi (€/km)<input inputmode="decimal" data-k="altri" value="${dec(c.altri,4)}"></label>
+    <label>Sterrato in più (€/km)<input inputmode="decimal" data-k="sterr" value="${dec(c.sterr,2)}" ${c.sterr==null?"disabled":""}></label></div>
+    <label class="spunta"><input type="checkbox" data-k="adatta" ${c.sterr!=null?"checked":""}>Adatta allo sterrato</label>
+    <p class="hint" data-tariffa>${rigaTariffa(c)}</p></div>`).join("")||'<p class="hint">Nessuna auto in elenco.</p>';
+}
+function renderImpostazioni(){renderImpDest();renderImpPrezzi();renderImpAuto();$("#membri").value=membri.join("\n")}
+function renderUscita(){renderDest();renderChips();renderAuto();renderCibo();renderRisultato()}
+function renderTutto(){renderUscita();renderStorico()}
+
+/* ---- eventi: uscita ---- */
 function kmPer(a){const d=destDef();return d&&d[a.partenza]!=null?String(d[a.partenza]).replace(".",","):""}
 $("#data").addEventListener("change",e=>{S.data=e.target.value;salvaBozza()});
 $("#dest").addEventListener("change",e=>{S.dest=e.target.value;S.auto.forEach(a=>a.km=kmPer(a));salvaBozza();renderDest();renderAuto();renderRisultato()});
+$("#destNome").addEventListener("input",e=>{S.destNome=e.target.value;salvaBozza()});
 $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const n=b.dataset.nome;
   S.part=S.part.includes(n)?S.part.filter(x=>x!==n):[...S.part,n];salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
-$("#addOspite").addEventListener("click",()=>{const v=$("#ospite").value.trim();if(!v)return;if(!tutti().includes(v))S.ospiti.push(v);if(!S.part.includes(v))S.part.push(v);$("#ospite").value="";salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
-$("#addAuto").addEventListener("click",()=>{const usati=S.auto.map(a=>a.tipo);const d=tariffe.find(t=>!usati.includes(t.id)&&t.id!=="fire_g"&&t.id!=="tesla_c")||tariffe[0];
-  const a={tipo:d.id,autista:d.autista,partenza:d.partenza,km:"",kmS:""};a.km=kmPer(a);S.auto.push(a);
+function aggiungiOspite(){const v=$("#ospite").value.trim();if(!v)return;if(!tutti().includes(v))S.ospiti.push(v);if(!S.part.includes(v))S.part.push(v);$("#ospite").value="";salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()}
+$("#addOspite").addEventListener("click",aggiungiOspite);
+$("#ospite").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();aggiungiOspite()}});
+$("#addAuto").addEventListener("click",()=>{
+  if(!auto.length){toast("Aggiungi prima un'auto in Auto e tariffe");return}
+  const usati=S.auto.map(a=>a.tipo), alVolante=S.auto.map(a=>a.autista).filter(Boolean);
+  const d=auto.find(t=>!usati.includes(t.id)&&!(t.autista&&alVolante.includes(t.autista)))||auto.find(t=>!usati.includes(t.id))||auto[0];
+  const a={tipo:d.id,autista:d.autista,partenza:d.partenza,km:"",kmS:""};a.km=kmPer(a);fotografa(a);S.auto.push(a);
   if(a.autista&&!S.part.includes(a.autista)&&membri.includes(a.autista))S.part.push(a.autista);
   salvaBozza();renderChips();renderAuto();renderCibo();renderRisultato()});
 $("#auto").addEventListener("input",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||!k)return;const a=S.auto[+v.dataset.i];a[k]=e.target.value;
-  if(k==="tipo"){const d=autoDef(a.tipo);a.autista=d.autista||a.autista;a.partenza=d.partenza;a.km=kmPer(a);if(d.sterrato==null)a.kmS="";if(a.autista&&membri.includes(a.autista)&&!S.part.includes(a.autista))S.part.push(a.autista);salvaBozza();renderChips();renderAuto();renderCibo()}
+  if(k==="tipo"){const c=auto.find(x=>x.id===a.tipo);fotografa(a);if(c){a.autista=c.autista||a.autista;a.partenza=c.partenza;a.km=kmPer(a);if(c.sterr==null)a.kmS="";if(a.autista&&membri.includes(a.autista)&&!S.part.includes(a.autista))S.part.push(a.autista)}salvaBozza();renderChips();renderAuto();renderCibo()}
   else if(k==="partenza"){a.km=kmPer(a);salvaBozza();renderAuto()}
   else{salvaBozza();aggiornaCostiAuto()}
   renderRisultato()});
-$("#auto").addEventListener("click",e=>{const b=e.target.closest("[data-del-auto]");if(!b)return;S.auto.splice(+b.dataset.delAuto,1);salvaBozza();renderAuto();renderRisultato()});
+$("#auto").addEventListener("click",e=>{
+  if(e.target.id==="sblocca"){S.fisse=false;salvaBozza();renderAuto();renderRisultato();toast("Tariffe di oggi applicate");return}
+  const b=e.target.closest("[data-del-auto]");if(!b)return;S.auto.splice(+b.dataset.delAuto,1);salvaBozza();renderAuto();renderRisultato()});
 $("#addCibo").addEventListener("click",()=>{S.cibo.push({chi:"",cosa:"",euro:""});salvaBozza();renderCibo()});
 $("#cibo").addEventListener("input",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||!k)return;S.cibo[+v.dataset.c][k]=e.target.value;salvaBozza();renderRisultato()});
 $("#cibo").addEventListener("click",e=>{const b=e.target.closest("[data-del-cibo]");if(!b)return;S.cibo.splice(+b.dataset.delCibo,1);salvaBozza();renderCibo();renderRisultato()});
@@ -311,26 +462,79 @@ async function copia(t){try{await navigator.clipboard.writeText(t);toast("Testo 
 function condividi(t){if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}}
 $("#risultato").addEventListener("click",e=>{
   const id=e.target.id;
-  if(id==="condividi"){condividi(testoWhatsApp());const R=calcola(),d=destDef();ev("conti_condivisi",{destinazione:d?d.nome:"",partecipanti:R.n})}
+  if(id==="condividi"){condividi(testoWhatsApp());ev("conti_condivisi",{destinazione:nomeDest(),partecipanti:S.part.length})}
   if(id==="copia"){copia(testoWhatsApp());ev("conti_copiati")}
-  if(id==="salvaUscita"){const R=calcola(),d=destDef();const st=load("gv_storico",[]);
-    const titolo=(S.data?new Date(S.data+"T12:00").toLocaleDateString("it-IT"):"")+" – "+(d&&d.id!=="altro"?d.nome:"Uscita");
-    st.unshift({titolo,n:R.n,tot:R.tot,quota:R.quota,testo:testoWhatsApp(),stato:JSON.parse(JSON.stringify(S))});save("gv_storico",st.slice(0,100));renderStorico();toast("Uscita salvata");ev("uscita_salvata",{destinazione:d?d.nome:""})}
+  if(id==="salvaUscita"){const R=calcola(),st=load("gv_storico",[]);
+    if(!S.sid)S.sid=nuovoId("u");salvaBozza();
+    const voce={sid:S.sid,titolo:dataIt(S.data)+" – "+(nomeDest()||"Uscita"),n:R.n,tot:R.tot,quota:R.quota,testo:testoWhatsApp(),stato:clone(S)};
+    const i=st.findIndex(u=>u.sid===S.sid);
+    if(i>=0)st[i]=voce;else st.unshift(voce);
+    save("gv_storico",st.slice(0,100));renderStorico();toast(i>=0?"Uscita aggiornata":"Uscita salvata");ev("uscita_salvata",{destinazione:nomeDest()})}
   if(id==="nuova"){if(confirm("Iniziare una nuova uscita? I dati non salvati andranno persi.")){S=nuovaUscita();salvaBozza();renderTutto();window.scrollTo(0,0)}}
 });
 $("#storico").addEventListener("click",e=>{const st=load("gv_storico",[]);const b=e.target;
   if(b.dataset.share!=null)condividi(st[+b.dataset.share].testo);
-  if(b.dataset.apri!=null){S=JSON.parse(JSON.stringify(st[+b.dataset.apri].stato));salvaBozza();renderTutto();window.scrollTo(0,0);toast("Uscita riaperta")}
+  if(b.dataset.apri!=null){const u=st[+b.dataset.apri];S={...nuovaUscita(),...clone(u.stato)};
+    if(!S.sid){S.sid=u.sid||nuovoId("u");u.sid=S.sid;save("gv_storico",st)}
+    S.fisse=S.auto.some(a=>a.snap);normalizza();salvaBozza();renderTutto();window.scrollTo(0,0);toast("Uscita riaperta")}
   if(b.dataset.canc!=null&&confirm("Eliminare questa uscita?")){st.splice(+b.dataset.canc,1);save("gv_storico",st);renderStorico()}});
-$("#salvaImp").addEventListener("click",()=>{
-  document.querySelectorAll("#tariffe [data-t]").forEach(inp=>{const t=tariffe[+inp.dataset.t],k=inp.dataset.k;
-    if(k==="autista")t.autista=inp.value.trim();else if(k==="sterrato")t.sterrato=inp.value.trim()===""?null:num(inp.value);else t.strada=num(inp.value)});
-  membri=$("#membri").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  save("gv_tariffe",tariffe);save("gv_membri",membri);renderTariffe();renderTutto();toast("Tariffe e componenti salvati")});
-$("#resetImp").addEventListener("click",()=>{if(!confirm("Ripristinare tariffe e componenti iniziali?"))return;
-  tariffe=JSON.parse(JSON.stringify(AUTO_BASE));membri=[...MEMBRI_BASE];save("gv_tariffe",tariffe);save("gv_membri",membri);renderTariffe();renderTutto();toast("Valori iniziali ripristinati")});
 
-renderTariffe();renderTutto();
+/* ---- eventi: impostazioni ---- */
+function apri(sel){const d=$(sel);d.open=true;return d}
+function nuovaDestinazione(scegli){
+  const d={id:nuovoId("d"),nome:"",riposto:null,randazzo:null,nota:""};dest.push(d);save("gv_dest",dest);
+  if(scegli){S.dest=d.id;S.auto.forEach(a=>a.km=kmPer(a));salvaBozza();renderAuto();renderRisultato()}
+  renderImpDest();renderDest();
+  const box=apri("#boxDest"), campo=box.querySelector(`[data-d="${dest.length-1}"] [data-k="nome"]`);
+  campo.scrollIntoView({block:"center"});campo.focus();
+}
+$("#nuovaDest").addEventListener("click",()=>nuovaDestinazione(true));
+$("#addDest").addEventListener("click",()=>nuovaDestinazione(false));
+$("#impDest").addEventListener("input",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||!k)return;const d=dest[+v.dataset.d];
+  if(k==="riposto"||k==="randazzo")d[k]=e.target.value.trim()===""?null:num(e.target.value);else d[k]=e.target.value;
+  if(k==="nome")v.querySelector("[data-titolo]").textContent=d.nome||"Nuova destinazione";
+  save("gv_dest",dest);renderDest()});
+$("#impDest").addEventListener("change",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||!k)return;const d=dest[+v.dataset.d];
+  if(k==="nome"||k==="nota"){d[k]=d[k].trim();save("gv_dest",dest);renderDest()}
+  else if(d.id===S.dest){S.auto.forEach(a=>a.km=kmPer(a));salvaBozza();renderAuto();renderRisultato()}});
+$("#impDest").addEventListener("click",e=>{const b=e.target.closest("[data-del-dest]");if(!b)return;const d=dest[+b.dataset.delDest];
+  if(!confirm(`Eliminare "${d.nome||"Nuova destinazione"}" dall'elenco?`))return;
+  dest.splice(+b.dataset.delDest,1);save("gv_dest",dest);normalizza();salvaBozza();renderImpDest();renderDest()});
+
+$("#impPrezzi").addEventListener("input",e=>{const k=e.target.dataset.p;if(!k)return;prezzi[k]=num(e.target.value);prezzi.data=oggi();save("gv_prezzi",prezzi);
+  renderRiepTariffe();document.querySelectorAll("#impAuto .voce").forEach(v=>{v.querySelector("[data-tariffa]").innerHTML=rigaTariffa(auto[+v.dataset.a])});
+  if(!S.fisse){salvaBozza();renderAuto();renderRisultato()}});
+
+$("#addTipoAuto").addEventListener("click",()=>{
+  auto.push({id:nuovoId("a"),nome:"",autista:"",partenza:"riposto",carb:"benzina",cons:7,altri:0.15,sterr:null});save("gv_auto2",auto);
+  renderImpAuto();renderRiepTariffe();renderAuto();
+  const campo=apri("#boxAuto").querySelector(`[data-a="${auto.length-1}"] [data-k="nome"]`);campo.scrollIntoView({block:"center"});campo.focus()});
+$("#impAuto").addEventListener("input",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||!k)return;const c=auto[+v.dataset.a];let rifai=false;
+  if(k==="adatta"){c.sterr=e.target.checked?0.10:null;rifai=true}
+  else if(k==="carb"){c.carb=e.target.value;rifai=true}
+  else if(k==="cons"||k==="altri"||k==="sterr")c[k]=num(e.target.value);
+  else c[k]=e.target.value;
+  if(k==="nome")v.querySelector("[data-titolo]").textContent=c.nome||"Nuova auto";
+  save("gv_auto2",auto);
+  if(rifai)renderImpAuto();else v.querySelector("[data-tariffa]").innerHTML=rigaTariffa(c);
+  renderRiepTariffe();salvaBozza();renderAuto();renderRisultato()});
+$("#impAuto").addEventListener("change",e=>{const v=e.target.closest(".voce"),k=e.target.dataset.k;if(!v||(k!=="nome"&&k!=="autista"))return;
+  const c=auto[+v.dataset.a];c[k]=c[k].trim();save("gv_auto2",auto);renderRiepTariffe();salvaBozza();renderAuto()});
+$("#impAuto").addEventListener("click",e=>{const b=e.target.closest("[data-del-tipo]");if(!b)return;const c=auto[+b.dataset.delTipo];
+  if(!confirm(`Eliminare "${c.nome||"Nuova auto"}" dall'elenco?`))return;
+  auto.splice(+b.dataset.delTipo,1);save("gv_auto2",auto);renderImpAuto();renderRiepTariffe();renderAuto();renderRisultato()});
+
+$("#membri").addEventListener("change",e=>{
+  const l=[...new Set(e.target.value.split("\n").map(s=>s.trim()).filter(Boolean))];
+  if(!l.length){e.target.value=membri.join("\n");toast("L'elenco non può restare vuoto");return}
+  membri=l;save("gv_membri",membri);e.target.value=membri.join("\n");renderChips();renderAuto();renderCibo();toast("Componenti salvati")});
+
+$("#resetImp").addEventListener("click",()=>{if(!confirm("Ripristinare destinazioni, prezzi, auto e componenti iniziali? Le uscite salvate restano."))return;
+  prezzi={...PREZZI_BASE};auto=clone(AUTO_BASE);dest=clone(DEST_BASE);membri=[...MEMBRI_BASE];
+  save("gv_prezzi",prezzi);save("gv_auto2",auto);save("gv_dest",dest);save("gv_membri",membri);
+  normalizza();salvaBozza();renderImpostazioni();renderTutto();toast("Impostazioni iniziali ripristinate")});
+
+renderImpostazioni();renderTutto();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
 </body>
